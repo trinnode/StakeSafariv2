@@ -19,7 +19,6 @@ const QUERIES = {
         user
         amount
         timestamp: blockTimestamp
-        blockNumber
         transactionHash
       }
     }
@@ -38,7 +37,7 @@ const QUERIES = {
         user
         amount
         timestamp: blockTimestamp
-        blockNumber
+        
         transactionHash
       }
     }
@@ -58,7 +57,7 @@ const QUERIES = {
         amount
         penalty
         timestamp: blockTimestamp
-        blockNumber
+        
         transactionHash
       }
     }
@@ -91,7 +90,7 @@ const QUERIES = {
         user
         amount
         timestamp: blockTimestamp
-        blockNumber
+        
         transactionHash
       }
     }
@@ -104,7 +103,7 @@ const QUERIES = {
         user
         amount
         timestamp: blockTimestamp
-        blockNumber
+        
         transactionHash
         __typename
       }
@@ -113,7 +112,7 @@ const QUERIES = {
         user
         amount
         timestamp: blockTimestamp
-        blockNumber
+        
         transactionHash
         __typename
       }
@@ -123,7 +122,7 @@ const QUERIES = {
         amount
         penalty
         timestamp: blockTimestamp
-        blockNumber
+        
         transactionHash
         __typename
       }
@@ -132,7 +131,7 @@ const QUERIES = {
         user
         amount
         timestamp: blockTimestamp
-        blockNumber
+        
         transactionHash
         __typename
       }
@@ -341,7 +340,6 @@ export const processUserStakes = (data) => {
       user: stake.user,
       amount: stake.amount,
       timestamp: stake.timestamp,
-      blockNumber: stake.blockNumber,
       transactionHash: stake.transactionHash,
       eventType: "Staked",
     }))
@@ -364,7 +362,6 @@ export const processUserWithdrawals = (data) => {
       user: withdrawal.user,
       amount: withdrawal.amount,
       timestamp: withdrawal.timestamp,
-      blockNumber: withdrawal.blockNumber,
       txHash: withdrawal.transactionHash, // Changed to match component expectations
       transactionHash: withdrawal.transactionHash, // Keep both for compatibility
       type: "withdrawal", // Changed to match component expectations
@@ -395,7 +392,6 @@ export const processUserEmergencyWithdrawals = (data) => {
       amount: emergencyWithdrawal.amount,
       penalty: emergencyWithdrawal.penalty,
       timestamp: emergencyWithdrawal.timestamp,
-      blockNumber: emergencyWithdrawal.blockNumber,
       txHash: emergencyWithdrawal.transactionHash, // Changed to match component expectations
       transactionHash: emergencyWithdrawal.transactionHash, // Keep both for compatibility
       type: "emergency", // Changed to match component expectations
@@ -414,7 +410,6 @@ export const processUserRewardsClaimed = (data) => {
       user: rewardClaimed.user,
       amount: rewardClaimed.amount,
       timestamp: rewardClaimed.timestamp,
-      blockNumber: rewardClaimed.blockNumber,
       transactionHash: rewardClaimed.transactionHash,
       eventType: "RewardClaimed",
     }))

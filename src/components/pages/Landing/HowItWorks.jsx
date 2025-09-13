@@ -113,7 +113,7 @@ export const HowItWorks = ({ appState }) => {
 
             <div className="text-center">
               <div className="font-gilbert text-2xl font-bold text-army-green mb-2">
-                {isConnected && userStats
+                {isConnected || userStats
                   ? userStats.stakedAmountFormatted
                   : "0"}
               </div>
