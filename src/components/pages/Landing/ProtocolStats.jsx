@@ -122,10 +122,7 @@ export const ProtocolStats = ({ appState }) => {
         {/* Event Connection Info */}
         <div className="mt-6 bg-dark border border-army-green-light p-4">
           <div className="font-gilbert text-xs text-army-green-lighter text-center">
-            <strong>Why WebSocket?</strong> We use WebSocket connections instead
-            of HTTP polling for instant updates when contract events occur. This
-            ensures zero-delay data synchronization and eliminates the need for
-            constant network requests.
+            <strong>Why Subgraphs?</strong> We use Subgraphs to index blockchain data and provide a more efficient way to query it. This ensures zero-delay data synchronization and eliminates the need for constant network requests.
           </div>
         </div>
       </div>
