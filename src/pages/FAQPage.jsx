@@ -249,7 +249,7 @@ export const FAQPage = ({ appState }) => {
           <div className="flex justify-center gap-4">
             <button
               onClick={() =>
-                window.open("https://github.com/trinnode/StakeSafari", "_blank")
+                window.open("https://github.com/trinnode/StakeSafariv2", "_blank")
               }
               className="font-gilbert px-4 py-2 border border-army-green text-army-green hover:bg-army-green hover:text-white"
             >
