@@ -254,7 +254,7 @@ export const useUserEmergencyWithdrawals = (userAddress, enabled = true) => {
   });
 };
 
-// Get ALL emergency withdrawals (for calculating total burned tokens)
+// Get ALL emergency withdrawals (for calculating total Slashed tokens)
 export const useAllEmergencyWithdrawals = (enabled = true) => {
   const pageSize = 100; // Larger page size since we need all data for total calculation
 

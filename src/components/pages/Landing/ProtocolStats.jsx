@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { formatTokenAmount, formatAPR } from "../../../utils/formatters.js";
-// Import subgraph hook to get emergency withdrawals for burned tokens calculation
+// Import subgraph hook to get emergency withdrawals for Slashed tokens calculation
 import { useAllEmergencyWithdrawals } from "../../../hooks/useSubgraphData.js";
 // Import for reading token total supply
 import { readContract } from "wagmi/actions";
@@ -21,7 +21,7 @@ export const ProtocolStats = ({ appState }) => {
   const [isLoadingStaking, setIsLoadingStaking] = useState(true);
   const [stakingError, setStakingError] = useState(null);
 
-  // Fetch ALL emergency withdrawals to calculate total burned tokens
+  // Fetch ALL emergency withdrawals to calculate total Slashed tokens
   const { data: allEmergencyData, isLoading: isLoadingBurned } =
     useAllEmergencyWithdrawals(true);
 
@@ -162,7 +162,7 @@ export const ProtocolStats = ({ appState }) => {
     }
   };
 
-  // Calculate total burned tokens from all emergency withdrawal penalties
+  // Calculate total Slashed tokens from all emergency withdrawal penalties
   const calculateTotalBurned = () => {
     if (!allEmergencyData?.pages) return BigInt(0);
 
@@ -178,7 +178,7 @@ export const ProtocolStats = ({ appState }) => {
 
   const totalBurned = calculateTotalBurned();
 
-  // Calculate correct circulating supply: Total Supply - Total Burned
+  // Calculate correct circulating supply: Total Supply - Total Slashed
   const calculateCirculatingSupply = () => {
     return totalSupply - totalBurned;
   };
@@ -292,13 +292,13 @@ export const ProtocolStats = ({ appState }) => {
             </div>
           </div>
 
-          {/* Total Burned */}
+          {/* Total Slashed */}
           <div className="bg-dark border border-red-600 p-6 text-center">
             <div className="font-gilbert text-2xl font-bold text-red-400 mb-2">
               {isLoadingBurned ? "Loading..." : formatTokenAmount(totalBurned)}
             </div>
             <div className="font-gilbert text-red-300 text-sm">
-              Tokens Burned
+              Tokens Slashed
             </div>
             <div className="font-gilbert text-xs text-red-400 mt-1">
               Emergency Penalties

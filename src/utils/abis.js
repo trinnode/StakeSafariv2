@@ -205,7 +205,7 @@ export const TOKEN_ABI = [
         type: "uint256",
       },
     ],
-    name: "burn",
+    name: "Slash",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -353,7 +353,7 @@ export const TOKEN_ABI = [
         type: "uint256",
       },
     ],
-    name: "Burn",
+    name: "Slash",
     type: "event",
   },
 ];

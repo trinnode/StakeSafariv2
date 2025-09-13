@@ -144,7 +144,7 @@ export const WithdrawalEducation = ({ appState }) => {
               <li>
                 • {STAKING_CONFIG.PENALTY_PERCENTAGE}% penalty on staked amount
               </li>
-              <li>• Penalty tokens are burned</li>
+              <li>• Penalty tokens are Slashed</li>
               <li>• Rewards can still be claimed</li>
             </ul>
           </div>

@@ -41,10 +41,10 @@ export const FeaturesGrid = ({ appState }) => {
     },
     {
       icon: "🔥",
-      title: "Burn Mechanism",
+      title: "Slash Mechanism",
       description: isConnected
-        ? `${protocolStats.totalBurnedFormatted} tokens burned so far from emergency withdrawals, reducing supply.`
-        : "Penalty tokens from emergency withdrawals are permanently burned, reducing supply.",
+        ? `${protocolStats.totalBurnedFormatted} tokens Slashed so far from emergency withdrawals, reducing supply.`
+        : "Penalty tokens from emergency withdrawals are permanently Slashed, reducing supply.",
       benefit: "Deflationary pressure",
     },
     {

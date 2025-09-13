@@ -46,7 +46,7 @@ export const EmergencyPage = ({ appState }) => {
           </h1>
           <p className="font-gilbert text-xl text-red-300">
             Withdraw with {STAKING_CONFIG.PENALTY_PERCENTAGE}% penalty - tokens
-            are burned
+            are Slashed
           </p>
         </div>
 
@@ -109,7 +109,7 @@ export const EmergencyPage = ({ appState }) => {
                   <div className="font-gilbert text-red-300 space-y-1">
                     <p>
                       • {STAKING_CONFIG.PENALTY_PERCENTAGE}% of your staked
-                      tokens will be permanently burned
+                      tokens will be permanently Slashed
                     </p>
                     <p>• This action cannot be undone</p>
                     <p>
@@ -153,7 +153,7 @@ export const EmergencyPage = ({ appState }) => {
                   {showPenaltyWarning && (
                     <div className="mt-4 p-3 bg-red-800 border border-red-600">
                       <p className="font-gilbert text-red-200 text-sm">
-                        ⚠️ Penalty tokens will be permanently burned from the
+                        ⚠️ Penalty tokens will be permanently Slashed from the
                         supply!
                       </p>
                     </div>

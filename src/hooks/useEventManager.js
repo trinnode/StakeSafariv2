@@ -126,7 +126,7 @@ export const useEventManager = () => {
     [eventData.emergencyWithdrawals]
   );
 
-  // Calculate total burned tokens from emergency withdrawals
+  // Calculate total Slashed tokens from emergency withdrawals
   const getTotalBurnedTokens = useCallback(() => {
     return eventData.emergencyWithdrawals.reduce(
       (total, withdrawal) => total + BigInt(withdrawal.burnedTokens || 0),

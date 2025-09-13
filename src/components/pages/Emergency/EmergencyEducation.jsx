@@ -95,23 +95,23 @@ export const EmergencyEducation = ({ appState }) => {
         </div>
       </div>
 
-      {/* Token Burn Mechanism */}
+      {/* Token Slash Mechanism */}
       <div className="bg-dark-light border border-red-500 p-6">
         <h3 className="font-gilbert text-xl font-bold text-red-400 mb-4">
-          🔥 Token Burn Mechanism
+          🔥 Token Slash Mechanism
         </h3>
         <div className="space-y-3 font-gilbert text-red-300 text-sm">
           <p>
             <strong>Deflationary Design:</strong> Penalty tokens are permanently
-            burned, reducing total supply and potentially increasing value for
+            Slashed, reducing total supply and potentially increasing value for
             remaining holders.
           </p>
           <p>
-            <strong>No Recovery:</strong> Burned tokens cannot be recovered,
+            <strong>No Recovery:</strong> Slashed tokens cannot be recovered,
             minted back, or retrieved through any mechanism.
           </p>
           <p>
-            <strong>Network Effect:</strong> The burn mechanism helps maintain
+            <strong>Network Effect:</strong> The Slash mechanism helps maintain
             protocol stability by discouraging premature exits.
           </p>
         </div>
@@ -168,7 +168,7 @@ export const EmergencyEducation = ({ appState }) => {
             from staked tokens
           </p>
           <p>
-            • <strong>Market Impact:</strong> Burned tokens may affect your
+            • <strong>Market Impact:</strong> Slashed tokens may affect your
             remaining holdings
           </p>
           <p>

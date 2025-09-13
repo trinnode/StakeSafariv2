@@ -185,7 +185,7 @@ export const WithdrawalHistory = () => {
                 )}
                 {event.penalty && (
                   <p className="font-gilbert text-red-400 text-xs sm:text-sm break-all">
-                    Penalty (Burned): {formatTokenAmount(event.penalty)} STAKE
+                    Penalty (Slashed): {formatTokenAmount(event.penalty)} STAKE
                   </p>
                 )}
                 {event.type === "withdrawal" && (

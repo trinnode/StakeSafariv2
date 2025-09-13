@@ -180,7 +180,7 @@ export const useContractFunctions = (walletClient, userAddress) => {
     [walletClient, setFunctionLoading, clearError, setFunctionError]
   );
 
-  // EMERGENCY WITHDRAWAL - With penalty and burn mechanism
+  // EMERGENCY WITHDRAWAL - With penalty and Slash mechanism
   const emergencyWithdraw = useCallback(async () => {
     if (!walletClient) throw new Error("Wallet not connected");
 

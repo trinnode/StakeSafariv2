@@ -308,7 +308,7 @@ export const useAppState = () => {
       participantCount: totalStakers, // Keep both for backward compatibility
     }));
 
-    // Calculate circulating supply (total supply - burned tokens)
+    // Calculate circulating supply (total supply - Slashed tokens)
     contractFunctions
       .getTokenBalance()
       .then((totalSupply) => {

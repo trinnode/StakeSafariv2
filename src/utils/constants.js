@@ -129,7 +129,7 @@ export const EDUCATION = {
 
   EMERGENCY_PROCESS: [
     "Select emergency withdrawal amount (incurs 30% penalty)",
-    "Review penalty calculation - tokens will be burned",
+    "Review penalty calculation - tokens will be Slashed",
     "Confirm that you understand the permanent loss",
     "Execute emergency withdrawal transaction",
     "Receive net amount (original - 30% penalty)",
@@ -320,7 +320,7 @@ export const FAQ_CONTENT = [
       {
         question: "How does the emergency withdrawal penalty work?",
         answer:
-          "30% of your withdrawn stake amount is permanently burned (removed from circulation). If you withdraw 100 tokens, 30 are burned and you receive 70. This penalty helps maintain protocol stability.",
+          "30% of your withdrawn stake amount is permanently Slashed (removed from circulation). If you withdraw 100 tokens, 30 are Slashed and you receive 70. This penalty helps maintain protocol stability.",
       },
       {
         question: "Can I cancel a withdrawal after initiating it?",

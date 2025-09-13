@@ -119,7 +119,7 @@ export const EmergencyHistory = () => {
                   </div>
                   <div>
                     <p className="font-gilbert text-red-300">
-                      Penalty (Burned):
+                      Penalty (Slashed):
                     </p>
                     <p className="font-gilbert text-red-400 font-bold">
                       {formatTokenAmount(event.penalty)} STAKE
@@ -190,7 +190,7 @@ export const EmergencyHistory = () => {
               </p>
             </div>
             <div>
-              <p className="font-gilbert text-red-300">Total Tokens Burned:</p>
+              <p className="font-gilbert text-red-300">Total Tokens Slashed:</p>
               <p className="font-gilbert text-red-400 font-bold">
                 {formatTokenAmount(
                   sortedEvents.reduce(

@@ -214,7 +214,7 @@ export const DevSummary = ({ appState }) => {
                   icon: "🚨",
                   features: [
                     "Penalty calculator",
-                    "30% burn mechanism",
+                    "30% Slash mechanism",
                     "Multi-step confirm",
                     "Risk warnings",
                   ],

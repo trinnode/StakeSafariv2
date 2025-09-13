@@ -146,7 +146,7 @@ export const EmergencyInterface = ({ appState }) => {
             </div>
             <div>
               <p className="font-gilbert text-red-300 mb-1">
-                Penalty (Burned):
+                Penalty (Slashed):
               </p>
               <p className="font-gilbert text-red-400 font-bold">
                 {formatTokenAmount(penaltyAmount)} STAKE
@@ -307,7 +307,7 @@ export const EmergencyInterface = ({ appState }) => {
                   Penalty ({STAKING_CONFIG.PENALTY_PERCENTAGE}%):
                 </span>
                 <span className="font-gilbert text-red-400 font-bold">
-                  -{formatTokenAmount(penaltyAmount)} STAKE (BURNED)
+                  -{formatTokenAmount(penaltyAmount)} STAKE (Slashed)
                 </span>
               </div>
               <div className="border-t border-red-500 pt-3">
@@ -323,7 +323,7 @@ export const EmergencyInterface = ({ appState }) => {
               <div className="bg-red-800 bg-opacity-50 p-3 mt-4">
                 <p className="font-gilbert text-red-200 text-sm">
                   <strong>IMPORTANT:</strong> The penalty tokens are permanently
-                  burned and cannot be recovered. Your pending rewards (
+                  Slashed and cannot be recovered. Your pending rewards (
                   {formatTokenAmount(appState.userData.pendingRewards)} STAKE)
                   CANNOT be claimed separately.
                 </p>
@@ -346,7 +346,7 @@ export const EmergencyInterface = ({ appState }) => {
                 <div className="bg-red-800 bg-opacity-50 p-4">
                   <p className="font-gilbert text-red-200 font-bold">
                     {formatTokenAmount(penaltyAmount)} STAKE tokens will be
-                    permanently burned INCLUDING THE REWARDS!
+                    permanently Slashed INCLUDING THE REWARDS!
                   </p>
                 </div>
               </div>
@@ -359,8 +359,9 @@ export const EmergencyInterface = ({ appState }) => {
                 <div className="bg-red-800 bg-opacity-50 p-4">
                   <p className="font-gilbert text-red-200">
                     You will lose {formatTokenAmount(penaltyAmount)} STAKE
-                    tokens and your REWARDS permanently. Only {formatTokenAmount(netReceived)}{" "}
-                    STAKE will be returned to you.
+                    tokens and your REWARDS permanently. Only{" "}
+                    {formatTokenAmount(netReceived)} STAKE will be returned to
+                    you.
                   </p>
                 </div>
               </div>

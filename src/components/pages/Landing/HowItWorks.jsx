@@ -74,7 +74,7 @@ export const HowItWorks = ({ appState }) => {
                 <li>• Withdraw any amount up to your stake</li>
                 <li>• Claim accumulated rewards separately</li>
                 <li>• Emergency withdrawal available (30% penalty)</li>
-                <li>• Penalty tokens are permanently burned</li>
+                <li>• Penalty tokens are permanently Slashed</li>
               </ul>
             </div>
           </div>
