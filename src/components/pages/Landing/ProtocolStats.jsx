@@ -6,7 +6,7 @@ import { formatTokenAmount, formatAPR } from "../../../utils/formatters.js";
 import { useAllEmergencyWithdrawals } from "../../../hooks/useSubgraphData.js";
 // Import for reading token total supply
 import { readContract } from "wagmi/actions";
-import { TOKEN_ABI } from "../../../utils/abis.js";
+import { TOKEN_ABI, STAKING_ABI } from "../../../utils/abis.js";
 import { CONTRACT_ADDRESSES } from "../../../utils/constants.js";
 import { config } from "../../../utils/rainbowkit.js";
 
@@ -14,6 +14,12 @@ export const ProtocolStats = ({ appState }) => {
   const [totalSupply, setTotalSupply] = useState(BigInt(0));
   const [isLoadingSupply, setIsLoadingSupply] = useState(true);
   const [supplyError, setSupplyError] = useState(null);
+
+  // State for total staked and current APR - independent of wallet connection
+  const [totalStaked, setTotalStaked] = useState(BigInt(0));
+  const [currentAPR, setCurrentAPR] = useState(BigInt(0));
+  const [isLoadingStaking, setIsLoadingStaking] = useState(true);
+  const [stakingError, setStakingError] = useState(null);
 
   // Fetch ALL emergency withdrawals to calculate total burned tokens
   const { data: allEmergencyData, isLoading: isLoadingBurned } =
@@ -52,6 +58,55 @@ export const ProtocolStats = ({ appState }) => {
     }
   }, [appState.eventManager.lastEventTime]);
 
+  // Fetch staking data from contract - independent of wallet connection
+  useEffect(() => {
+    const fetchStakingData = async () => {
+      setIsLoadingStaking(true);
+      setStakingError(null);
+
+      try {
+        console.log("Fetching staking data from contract...");
+
+        // Fetch total staked
+        const totalStakedResult = await readContract(config, {
+          address: CONTRACT_ADDRESSES.STAKING,
+          abi: STAKING_ABI,
+          functionName: "totalStaked",
+        });
+
+        // Fetch current reward rate (APR)
+        const currentRewardRateResult = await readContract(config, {
+          address: CONTRACT_ADDRESSES.STAKING,
+          abi: STAKING_ABI,
+          functionName: "currentRewardRate",
+        });
+
+        console.log("Total staked fetched:", totalStakedResult.toString());
+        console.log(
+          "Current reward rate fetched:",
+          currentRewardRateResult.toString()
+        );
+
+        setTotalStaked(totalStakedResult);
+        setCurrentAPR(currentRewardRateResult);
+      } catch (error) {
+        console.error("Error fetching staking data:", error);
+        setStakingError(error.message);
+        setTotalStaked(BigInt(0));
+        setCurrentAPR(BigInt(0));
+      } finally {
+        setIsLoadingStaking(false);
+      }
+    };
+
+    fetchStakingData();
+
+    // Refresh staking data when app state refreshes
+    if (appState.eventManager.lastEventTime) {
+      fetchStakingData();
+    }
+  }, [appState.eventManager.lastEventTime]);
+
   // Retry function for total supply
   const retryFetchTotalSupply = async () => {
     setIsLoadingSupply(true);
@@ -72,6 +127,38 @@ export const ProtocolStats = ({ appState }) => {
       setTotalSupply(BigInt(0));
     } finally {
       setIsLoadingSupply(false);
+    }
+  };
+
+  // Retry function for staking data
+  const retryFetchStakingData = async () => {
+    setIsLoadingStaking(true);
+    setStakingError(null);
+
+    try {
+      console.log("Retrying staking data fetch...");
+
+      const totalStakedResult = await readContract(config, {
+        address: CONTRACT_ADDRESSES.STAKING,
+        abi: STAKING_ABI,
+        functionName: "totalStaked",
+      });
+
+      const currentRewardRateResult = await readContract(config, {
+        address: CONTRACT_ADDRESSES.STAKING,
+        abi: STAKING_ABI,
+        functionName: "currentRewardRate",
+      });
+
+      setTotalStaked(totalStakedResult);
+      setCurrentAPR(currentRewardRateResult);
+    } catch (error) {
+      console.error("Error on retry fetching staking data:", error);
+      setStakingError(error.message);
+      setTotalStaked(BigInt(0));
+      setCurrentAPR(BigInt(0));
+    } finally {
+      setIsLoadingStaking(false);
     }
   };
 
@@ -98,12 +185,6 @@ export const ProtocolStats = ({ appState }) => {
 
   const circulatingSupply = calculateCirculatingSupply();
 
-  // Use formatTokenAmount for better formatting when raw numbers are available
-  const formatRawTokenAmount = (amount) => formatTokenAmount(amount);
-
-  // Use formatAPR for percentage formatting
-  const formatAPRValue = (apr) => formatAPR(apr);
-
   return (
     <section className="px-6 py-16 bg-dark-light">
       <div className="max-w-6xl mx-auto">
@@ -121,26 +202,48 @@ export const ProtocolStats = ({ appState }) => {
           {/* Total Staked */}
           <div className="bg-dark border border-army-green p-6 text-center">
             <div className="font-gilbert text-2xl font-bold text-army-green mb-2">
-              {formatRawTokenAmount(appState.protocolData.totalStaked)}
+              {isLoadingStaking ? (
+                "Loading..."
+              ) : stakingError ? (
+                <button
+                  onClick={retryFetchStakingData}
+                  className="text-red-400 hover:text-red-300 underline cursor-pointer"
+                >
+                  Retry
+                </button>
+              ) : (
+                formatTokenAmount(totalStaked)
+              )}
             </div>
             <div className="font-gilbert text-army-green-lighter text-sm">
               Total Staked Tokens
             </div>
             <div className="font-gilbert text-xs text-army-green mt-1">
-              STAKE
+              {stakingError ? "Click to Retry" : "STAKE"}
             </div>
           </div>
 
           {/* Current APR */}
           <div className="bg-dark border border-army-green p-6 text-center">
             <div className="font-gilbert text-2xl font-bold text-army-green mb-2">
-              {formatAPRValue(appState.protocolData.currentAPR)}
+              {isLoadingStaking ? (
+                "Loading..."
+              ) : stakingError ? (
+                <button
+                  onClick={retryFetchStakingData}
+                  className="text-red-400 hover:text-red-300 underline cursor-pointer"
+                >
+                  Retry
+                </button>
+              ) : (
+                formatAPR(currentAPR)
+              )}
             </div>
             <div className="font-gilbert text-army-green-lighter text-sm">
               Current APR
             </div>
             <div className="font-gilbert text-xs text-army-green mt-1">
-              Dynamic Rate
+              {stakingError ? "Click to Retry" : "Dynamic Rate"}
             </div>
           </div>
 
