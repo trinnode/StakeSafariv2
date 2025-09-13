@@ -58,7 +58,7 @@ export const HowItWorks = ({ appState }) => {
               <ul className="font-gilbert text-army-green-lighter space-y-2 text-sm">
                 <li>• Approve tokens for the staking contract</li>
                 <li>• Deposit your tokens into the staking pool</li>
-                <li>• Tokens are locked for minimum 5 minutes</li>
+                <li>• Tokens are locked for minimum 5 days </li>
                 <li>• Rewards accrue automatically over time</li>
                 <li>• APR decreases as more tokens are staked</li>
               </ul>
