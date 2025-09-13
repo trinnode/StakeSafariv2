@@ -325,7 +325,7 @@ export const EmergencyInterface = ({ appState }) => {
                   <strong>IMPORTANT:</strong> The penalty tokens are permanently
                   burned and cannot be recovered. Your pending rewards (
                   {formatTokenAmount(appState.userData.pendingRewards)} STAKE)
-                  can still be claimed separately.
+                  CANNOT be claimed separately.
                 </p>
               </div>
             </div>
@@ -346,7 +346,7 @@ export const EmergencyInterface = ({ appState }) => {
                 <div className="bg-red-800 bg-opacity-50 p-4">
                   <p className="font-gilbert text-red-200 font-bold">
                     {formatTokenAmount(penaltyAmount)} STAKE tokens will be
-                    permanently burned!
+                    permanently burned INCLUDING THE REWARDS!
                   </p>
                 </div>
               </div>
@@ -359,7 +359,7 @@ export const EmergencyInterface = ({ appState }) => {
                 <div className="bg-red-800 bg-opacity-50 p-4">
                   <p className="font-gilbert text-red-200">
                     You will lose {formatTokenAmount(penaltyAmount)} STAKE
-                    tokens permanently. Only {formatTokenAmount(netReceived)}{" "}
+                    tokens and your REWARDS permanently. Only {formatTokenAmount(netReceived)}{" "}
                     STAKE will be returned to you.
                   </p>
                 </div>
