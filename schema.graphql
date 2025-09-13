@@ -12,7 +12,7 @@ type RewardsClaimed @entity(immutable: false) {
   id: Bytes!
   amount: BigInt!
   timestamp: BigInt!
-  newPendingRewards: BigInt! // MISTAKE: To be corrected
+  newPendingRewards: BigInt! # MISTAKE: To be corrected
   totalStaked: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -46,10 +46,10 @@ type ProtocolStats @entity  {
   currentRewardRate: BigInt! 
   totalBurned: BigInt! 
   totalUsers: BigInt! 
-  totalStakeEvents: BigInt! // number of stake events
-  totalWithdrawEvents: BigInt! // number of withdraw events
-  totalEmergencyWithdrawEvents: BigInt! // number of emergency withdraw events
-  totalRewardsClaimedEvents: BigInt! // number of rewards claimed events
+  totalStakeEvents: BigInt! # number of stake events
+  totalWithdrawEvents: BigInt! # number of withdraw events
+  totalEmergencyWithdrawEvents: BigInt! # number of emergency withdraw events
+  totalRewardsClaimedEvents: BigInt! # number of rewards claimed events
   lastUpdatedTimestamp: BigInt! 
 }
 
