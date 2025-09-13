@@ -41,16 +41,21 @@ export const WithdrawalHistory = () => {
     isError: isErrorEmergency,
   } = useUserEmergencyWithdrawals(userAddress, !!userAddress);
 
-  // Process subgraph data into component-friendly format
-  const withdrawalEvents = withdrawalData
-    ? processUserWithdrawals(withdrawalData)
-    : [];
-  const emergencyEvents = emergencyData
-    ? processUserEmergencyWithdrawals(emergencyData)
-    : [];
+  // Process subgraph data into component-friendly format with safety checks
+  const withdrawalEvents =
+    withdrawalData && withdrawalData.pages
+      ? processUserWithdrawals(withdrawalData)
+      : [];
+  const emergencyEvents =
+    emergencyData && emergencyData.pages
+      ? processUserEmergencyWithdrawals(emergencyData)
+      : [];
 
-  // Combine both types of withdrawal events
-  const allWithdrawalEvents = [...withdrawalEvents, ...emergencyEvents];
+  // Combine both types of withdrawal events with safety checks
+  const allWithdrawalEvents = [
+    ...(withdrawalEvents || []),
+    ...(emergencyEvents || []),
+  ];
 
   // COMMENTED OUT: Original event filtering replaced with subgraph data
   // Filter withdrawal-related events with safety check
@@ -58,9 +63,9 @@ export const WithdrawalHistory = () => {
   //   ["Withdrawn", "EmergencyWithdrawn"].includes(event.eventName)
   // );
 
-  // Sort by timestamp (newest first)
-  const sortedEvents = allWithdrawalEvents.sort(
-    (a, b) => Number(b.timestamp) - Number(a.timestamp)
+  // Sort by timestamp (newest first) with safety check
+  const sortedEvents = (allWithdrawalEvents || []).sort(
+    (a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0)
   );
 
   // Check if any data is loading
@@ -126,7 +131,7 @@ export const WithdrawalHistory = () => {
             Please try refreshing the page
           </p>
         </div>
-      ) : sortedEvents.length === 0 ? (
+      ) : (sortedEvents || []).length === 0 ? (
         <div className="text-center py-8">
           <div className="w-12 h-12 sm:w-16 sm:h-16 border border-army-green-light mx-auto mb-4 flex items-center justify-center">
             <span className="font-gilbert text-xl sm:text-2xl text-army-green-lighter">
@@ -142,7 +147,7 @@ export const WithdrawalHistory = () => {
         </div>
       ) : (
         <div className="space-y-3 max-h-80 sm:max-h-96 overflow-y-auto">
-          {sortedEvents.slice(0, 10).map((event, index) => (
+          {(sortedEvents || []).slice(0, 10).map((event, index) => (
             <div
               key={`${event.txHash}-${index}`}
               className="bg-dark border border-army-green-light p-3 sm:p-4"
@@ -203,14 +208,16 @@ export const WithdrawalHistory = () => {
                   </p>
                 )}
                 <p className="font-gilbert text-army-green-lighter text-xs break-all">
-                  Tx: {event.txHash.slice(0, 6)}...
-                  {event.txHash.slice(-6)}
+                  Tx:{" "}
+                  {event.txHash
+                    ? `${event.txHash.slice(0, 6)}...${event.txHash.slice(-6)}`
+                    : "N/A"}
                 </p>
               </div>
             </div>
           ))}
 
-          {sortedEvents.length > 10 && (
+          {(sortedEvents || []).length > 10 && (
             <div className="text-center pt-4">
               <p className="font-gilbert text-army-green-lighter text-xs sm:text-sm">
                 Showing latest 10 withdrawal transactions

@@ -1,10 +1,102 @@
 // Protocol statistics section - MANDATORY real-time data display
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { formatTokenAmount, formatAPR } from "../../../utils/formatters.js";
+// Import subgraph hook to get emergency withdrawals for burned tokens calculation
+import { useAllEmergencyWithdrawals } from "../../../hooks/useSubgraphData.js";
+// Import for reading token total supply
+import { readContract } from "wagmi/actions";
+import { TOKEN_ABI } from "../../../utils/abis.js";
+import { CONTRACT_ADDRESSES } from "../../../utils/constants.js";
+import { config } from "../../../utils/rainbowkit.js";
 
 export const ProtocolStats = ({ appState }) => {
-  const protocolStats = appState.getProtocolStats();
+  const [totalSupply, setTotalSupply] = useState(BigInt(0));
+  const [isLoadingSupply, setIsLoadingSupply] = useState(true);
+  const [supplyError, setSupplyError] = useState(null);
+
+  // Fetch ALL emergency withdrawals to calculate total burned tokens
+  const { data: allEmergencyData, isLoading: isLoadingBurned } =
+    useAllEmergencyWithdrawals(true);
+
+  // Fetch total supply from token contract - represents actual minted tokens
+  useEffect(() => {
+    const fetchTotalSupply = async () => {
+      setIsLoadingSupply(true);
+      setSupplyError(null);
+
+      try {
+        console.log("Fetching total supply from token contract...");
+        const supply = await readContract(config, {
+          address: CONTRACT_ADDRESSES.TOKEN,
+          abi: TOKEN_ABI,
+          functionName: "totalSupply",
+        });
+        console.log("Total supply fetched:", supply.toString());
+        setTotalSupply(supply);
+      } catch (error) {
+        console.error("Error fetching total supply:", error);
+        setSupplyError(error.message);
+        // Don't set a fallback value - keep it as 0 to indicate fetch failed
+        setTotalSupply(BigInt(0));
+      } finally {
+        setIsLoadingSupply(false);
+      }
+    };
+
+    fetchTotalSupply();
+
+    // Refresh total supply when app state refreshes
+    if (appState.eventManager.lastEventTime) {
+      fetchTotalSupply();
+    }
+  }, [appState.eventManager.lastEventTime]);
+
+  // Retry function for total supply
+  const retryFetchTotalSupply = async () => {
+    setIsLoadingSupply(true);
+    setSupplyError(null);
+
+    try {
+      console.log("Retrying total supply fetch...");
+      const supply = await readContract(config, {
+        address: CONTRACT_ADDRESSES.TOKEN,
+        abi: TOKEN_ABI,
+        functionName: "totalSupply",
+      });
+      console.log("Total supply fetched on retry:", supply.toString());
+      setTotalSupply(supply);
+    } catch (error) {
+      console.error("Error on retry fetching total supply:", error);
+      setSupplyError(error.message);
+      setTotalSupply(BigInt(0));
+    } finally {
+      setIsLoadingSupply(false);
+    }
+  };
+
+  // Calculate total burned tokens from all emergency withdrawal penalties
+  const calculateTotalBurned = () => {
+    if (!allEmergencyData?.pages) return BigInt(0);
+
+    // Sum all penalties from all emergency withdrawals
+    return allEmergencyData.pages.reduce((total, page) => {
+      const pageTotal = (page.emergencyWithdrawns || []).reduce(
+        (pageSum, event) => pageSum + BigInt(event.penalty || 0),
+        BigInt(0)
+      );
+      return total + pageTotal;
+    }, BigInt(0));
+  };
+
+  const totalBurned = calculateTotalBurned();
+
+  // Calculate correct circulating supply: Total Supply - Total Burned
+  const calculateCirculatingSupply = () => {
+    return totalSupply - totalBurned;
+  };
+
+  const circulatingSupply = calculateCirculatingSupply();
 
   // Use formatTokenAmount for better formatting when raw numbers are available
   const formatRawTokenAmount = (amount) => formatTokenAmount(amount);
@@ -25,7 +117,7 @@ export const ProtocolStats = ({ appState }) => {
         </div>
 
         {/* Event-driven data display */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {/* Total Staked */}
           <div className="bg-dark border border-army-green p-6 text-center">
             <div className="font-gilbert text-2xl font-bold text-army-green mb-2">
@@ -35,7 +127,7 @@ export const ProtocolStats = ({ appState }) => {
               Total Staked Tokens
             </div>
             <div className="font-gilbert text-xs text-army-green mt-1">
-              tNODE
+              STAKE
             </div>
           </div>
 
@@ -52,23 +144,55 @@ export const ProtocolStats = ({ appState }) => {
             </div>
           </div>
 
+          {/* Total Supply (Minted Tokens) */}
+          <div className="bg-dark border border-blue-600 p-6 text-center">
+            <div className="font-gilbert text-2xl font-bold text-blue-400 mb-2">
+              {isLoadingSupply ? (
+                "Loading..."
+              ) : supplyError ? (
+                <button
+                  onClick={retryFetchTotalSupply}
+                  className="text-red-400 hover:text-red-300 underline cursor-pointer"
+                >
+                  Retry
+                </button>
+              ) : totalSupply === BigInt(0) ? (
+                "0"
+              ) : (
+                formatTokenAmount(totalSupply)
+              )}
+            </div>
+            <div className="font-gilbert text-blue-300 text-sm">
+              Total Supply
+            </div>
+            <div className="font-gilbert text-xs text-blue-400 mt-1">
+              {supplyError ? "Click to Retry" : "Minted Tokens"}
+            </div>
+          </div>
+
           {/* Circulating Supply */}
           <div className="bg-dark border border-army-green p-6 text-center">
             <div className="font-gilbert text-2xl font-bold text-army-green mb-2">
-              {protocolStats.circulatingSupplyFormatted}
+              {isLoadingSupply || isLoadingBurned
+                ? "Loading..."
+                : supplyError
+                ? "Error"
+                : totalSupply === BigInt(0)
+                ? "0"
+                : formatTokenAmount(circulatingSupply)}
             </div>
             <div className="font-gilbert text-army-green-lighter text-sm">
               Circulating Supply
             </div>
             <div className="font-gilbert text-xs text-army-green mt-1">
-              After Burns
+              {supplyError ? "Contract Error" : "After Burns"}
             </div>
           </div>
 
           {/* Total Burned */}
           <div className="bg-dark border border-red-600 p-6 text-center">
             <div className="font-gilbert text-2xl font-bold text-red-400 mb-2">
-              {protocolStats.totalBurnedFormatted}
+              {isLoadingBurned ? "Loading..." : formatTokenAmount(totalBurned)}
             </div>
             <div className="font-gilbert text-red-300 text-sm">
               Tokens Burned
@@ -122,7 +246,10 @@ export const ProtocolStats = ({ appState }) => {
         {/* Event Connection Info */}
         <div className="mt-6 bg-dark border border-army-green-light p-4">
           <div className="font-gilbert text-xs text-army-green-lighter text-center">
-            <strong>Why Subgraphs?</strong> We use Subgraphs to index blockchain data and provide a more efficient way to query it. This ensures zero-delay data synchronization and eliminates the need for constant network requests.
+            <strong>Why Subgraphs?</strong> We use Subgraphs to index blockchain
+            data and provide a more efficient way to query it. This ensures
+            zero-delay data synchronization and eliminates the need for constant
+            network requests.
           </div>
         </div>
       </div>

@@ -4,9 +4,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 // Subgraph endpoint for The Graph Protocol
-const SUBGRAPH_URL = import.meta.env.VITE_SUBGRAPH_URL; 
-
-// GraphQL queries for different event types
+const SUBGRAPH_URL = import.meta.env.VITE_SUBGRAPH_URL; // GraphQL queries for different event types
 const QUERIES = {
   USER_STAKES: `
     query GetUserStakes($user: String!, $first: Int!, $skip: Int!) {
@@ -59,10 +57,23 @@ const QUERIES = {
         user
         amount
         penalty
-        amountBurned
         timestamp: blockTimestamp
         blockNumber
         transactionHash
+      }
+    }
+  `,
+
+  ALL_EMERGENCY_WITHDRAWALS: `
+    query GetAllEmergencyWithdrawals($first: Int!, $skip: Int!) {
+      emergencyWithdrawns(
+        first: $first
+        skip: $skip
+        orderBy: blockTimestamp
+        orderDirection: desc
+      ) {
+        id
+        penalty
       }
     }
   `,
@@ -111,7 +122,6 @@ const QUERIES = {
         user
         amount
         penalty
-        amountBurned
         timestamp: blockTimestamp
         blockNumber
         transactionHash
@@ -132,6 +142,12 @@ const QUERIES = {
 
 // GraphQL client with error handling and retry mechanisms
 const fetchGraphQL = async (query, variables = {}) => {
+  if (!SUBGRAPH_URL) {
+    throw new Error(
+      "Subgraph URL is not configured. Please set VITE_SUBGRAPH_URL environment variable."
+    );
+  }
+
   try {
     const response = await fetch(SUBGRAPH_URL, {
       method: "POST",
@@ -149,6 +165,8 @@ const fetchGraphQL = async (query, variables = {}) => {
     }
 
     const result = await response.json();
+
+    console.log("GraphQL fetch result:", result);
 
     if (result.errors) {
       throw new Error(
@@ -236,6 +254,30 @@ export const useUserEmergencyWithdrawals = (userAddress, enabled = true) => {
   });
 };
 
+// Get ALL emergency withdrawals (for calculating total burned tokens)
+export const useAllEmergencyWithdrawals = (enabled = true) => {
+  const pageSize = 100; // Larger page size since we need all data for total calculation
+
+  return useInfiniteQuery({
+    queryKey: ["all-emergency-withdrawals"],
+    queryFn: ({ pageParam = 0 }) =>
+      fetchGraphQL(QUERIES.ALL_EMERGENCY_WITHDRAWALS, {
+        first: pageSize,
+        skip: pageParam * pageSize,
+      }),
+    getNextPageParam: (lastPage, allPages) => {
+      const emergencyWithdrawns = lastPage.emergencyWithdrawns || [];
+      return emergencyWithdrawns.length === pageSize
+        ? allPages.length
+        : undefined;
+    },
+    enabled: enabled,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
 // Get user rewards claimed history with pagination
 export const useUserRewardsClaimed = (userAddress, enabled = true) => {
   const pageSize = 10;
@@ -258,7 +300,6 @@ export const useUserRewardsClaimed = (userAddress, enabled = true) => {
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
-
 
 // Get all user events combined with pagination
 export const useAllUserEvents = (userAddress, enabled = true) => {
@@ -309,38 +350,58 @@ export const processUserStakes = (data) => {
 
 // Process user withdrawals data for components
 export const processUserWithdrawals = (data) => {
-  if (!data?.pages) return [];
+  if (!data?.pages) {
+    return [];
+  }
 
-  return data.pages.flatMap((page) =>
-    (page.withdrawns || []).map((withdrawal) => ({
+  return data.pages.flatMap((page) => {
+    if (!page || !page.withdrawns) {
+      return [];
+    }
+
+    return page.withdrawns.map((withdrawal) => ({
       id: withdrawal.id,
       user: withdrawal.user,
       amount: withdrawal.amount,
       timestamp: withdrawal.timestamp,
       blockNumber: withdrawal.blockNumber,
-      transactionHash: withdrawal.transactionHash,
-      eventType: "Withdrawn",
-    }))
-  );
+      txHash: withdrawal.transactionHash, // Changed to match component expectations
+      transactionHash: withdrawal.transactionHash, // Keep both for compatibility
+      type: "withdrawal", // Changed to match component expectations
+      eventType: "Withdrawn", // Keep both for compatibility
+    }));
+  });
 };
 
 // Process user emergency withdrawals data for components
 export const processUserEmergencyWithdrawals = (data) => {
-  if (!data?.pages) return [];
+  if (!data?.pages) {
+    console.log("processUserEmergencyWithdrawals: No pages data", data);
+    return [];
+  }
 
-  return data.pages.flatMap((page) =>
-    (page.emergencyWithdrawns || []).map((emergencyWithdrawal) => ({
+  return data.pages.flatMap((page) => {
+    if (!page || !page.emergencyWithdrawns) {
+      console.log(
+        "processUserEmergencyWithdrawals: No emergencyWithdrawns in page",
+        page
+      );
+      return [];
+    }
+
+    return page.emergencyWithdrawns.map((emergencyWithdrawal) => ({
       id: emergencyWithdrawal.id,
       user: emergencyWithdrawal.user,
       amount: emergencyWithdrawal.amount,
       penalty: emergencyWithdrawal.penalty,
-      amountBurned: emergencyWithdrawal.amountBurned,
       timestamp: emergencyWithdrawal.timestamp,
       blockNumber: emergencyWithdrawal.blockNumber,
-      transactionHash: emergencyWithdrawal.transactionHash,
-      eventType: "EmergencyWithdrawn",
-    }))
-  );
+      txHash: emergencyWithdrawal.transactionHash, // Changed to match component expectations
+      transactionHash: emergencyWithdrawal.transactionHash, // Keep both for compatibility
+      type: "emergency", // Changed to match component expectations
+      eventType: "EmergencyWithdrawn", // Keep both for compatibility
+    }));
+  });
 };
 
 // Process user rewards claimed data for components
@@ -419,6 +480,7 @@ export const useSubgraphData = () => {
     useUserStakes,
     useUserWithdrawals,
     useUserEmergencyWithdrawals,
+    useAllEmergencyWithdrawals,
     useUserRewardsClaimed,
     useAllUserEvents,
 
