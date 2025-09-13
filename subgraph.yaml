@@ -1,0 +1,35 @@
+specVersion: 1.3.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: StakingContract
+    network: sepolia
+    source:
+      address: "0xEF42eca620b39Fed83A7EeDa80a5B3382113EC76"
+      abi: StakingContract
+      startBlock: 9177771
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.9
+      language: wasm/assemblyscript
+      entities:
+        - EmergencyWithdrawn
+        - RewardsClaimed
+        - Staked
+        - Withdrawn
+      abis:
+        - name: StakingContract
+          file: ./abis/StakingContract.json
+      eventHandlers:
+        - event: EmergencyWithdrawn(indexed address,uint256,uint256,uint256,uint256)
+          handler: handleEmergencyWithdrawn
+        - event: RewardsClaimed(indexed address,uint256,uint256,uint256,uint256)
+          handler: handleRewardsClaimed
+        - event: Staked(indexed address,uint256,uint256,uint256,uint256)
+          handler: handleStaked
+        - event: Withdrawn(indexed address,uint256,uint256,uint256,uint256,uint256)
+          handler: handleWithdrawn
+      file: ./src/staking-contract.ts

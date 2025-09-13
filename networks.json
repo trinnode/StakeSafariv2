@@ -1,0 +1,8 @@
+{
+  "sepolia": {
+    "StakingContract": {
+      "address": "0xEF42eca620b39Fed83A7EeDa80a5B3382113EC76",
+      "startBlock": 9177771
+    }
+  }
+}
