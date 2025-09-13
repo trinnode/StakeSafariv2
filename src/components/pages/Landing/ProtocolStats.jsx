@@ -288,7 +288,7 @@ export const ProtocolStats = ({ appState }) => {
               Circulating Supply
             </div>
             <div className="font-gilbert text-xs text-army-green mt-1">
-              {supplyError ? "Contract Error" : "After Burns"}
+              {supplyError ? "Contract Error" : "After Slashes"}
             </div>
           </div>
 
