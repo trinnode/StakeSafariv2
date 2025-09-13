@@ -1,0 +1,130 @@
+@import "tailwindcss";
+@import '@fontsource/space-mono';
+
+/* Gilbert Mono font setup with Space Mono fallback */
+/* Remove broken @font-face and rely on Google Fonts link in HTML */
+
+:root {
+  font-family: 'Gilbert Mono', 'Space Mono', monospace;
+  line-height: 1.5;
+  font-weight: 400;
+  
+  /* MANDATORY: Army green and black color scheme only */
+  color: #ffffff;
+  background-color: #000000;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  /* No border radius anywhere - sharp rectangles only */
+  border-radius: 0 !important;
+  /* No shadows anywhere - flat design only */
+  box-shadow: none !important;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: 'Gilbert Mono', 'Space Mono', monospace;
+  background-color: #000000;
+  color: #ffffff;
+}
+
+a {
+  font-weight: 500;
+  color: #8FBC8F;
+  text-decoration: none;
+}
+a:hover {
+  color: #6B7A3A;
+}
+
+button {
+  border: 1px solid #4B5320;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: 'Gilbert Mono', 'Space Mono', monospace;
+  background-color: #1A1A1A;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* No border radius */
+  border-radius: 0;
+  /* No box shadow */
+  box-shadow: none;
+}
+
+button:hover {
+  background-color: #4B5320;
+  color: #ffffff;
+}
+
+button:focus,
+button:focus-visible {
+  outline: 2px solid #8FBC8F;
+  outline-offset: 2px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Gilbert Mono', 'Space Mono', monospace;
+  color: #ffffff;
+}
+
+input, textarea, select {
+  font-family: 'Gilbert Mono', 'Space Mono', monospace;
+  background-color: #1A1A1A;
+  color: #ffffff;
+  border: 1px solid #4B5320;
+  /* No border radius */
+  border-radius: 0;
+  padding: 0.5em;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid #8FBC8F;
+  outline-offset: 2px;
+}
+
+/* RainbowKit ConnectButton Custom Styling */
+[data-rk] button[data-testid="rk-connect-button"],
+[data-rk] button[data-testid="rk-account-button"] {
+  background: linear-gradient(135deg, #004700 0%, #008000 100%) !important;
+  color: white !important;
+  border: 1px solid #004700 !important;
+  border-radius: 0 !important;
+  font-family: 'Gilbert Mono', 'Space Mono', monospace !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  padding: 0.5rem 1rem !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+}
+
+[data-rk] button[data-testid="rk-connect-button"]:hover,
+[data-rk] button[data-testid="rk-account-button"]:hover {
+  background: #004700 !important;
+  transform: translateY(-1px) !important;
+}
+
+[data-rk] button[data-testid="rk-connect-button"] span,
+[data-rk] button[data-testid="rk-account-button"] span {
+  color: white !important;
+}
+
+/* RainbowKit Modal Styling */
+[data-rk] [role="dialog"] {
+  background-color: #1A1A1A !important;
+  border: 1px solid #4B5320 !important;
+  border-radius: 0 !important;
+}
+
+[data-rk] [role="dialog"] button {
+  border-radius: 0 !important;
+  font-family: 'Gilbert Mono', 'Space Mono', monospace !important;
+}
